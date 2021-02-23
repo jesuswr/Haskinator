@@ -1,5 +1,6 @@
 module Haskinator where
 
+import System.Directory
 import Oraculo
 
 
@@ -18,8 +19,8 @@ runMainLoop orac = do
   case option of
     "1" -> nuevoOraculo
     "2" -> putStrLn "En progreso"
-    "3" -> putStrLn "En progreso"
-    "4" -> putStrLn "En progreso"
+    "3" -> guardarOraculo orac
+    "4" -> cargarOraculo orac
     "5" -> putStrLn "En progreso"
     "6" -> return()
     _   -> do
@@ -41,3 +42,25 @@ nuevoOraculo = do
   putStrLn "Diga su prediccion."
   pred <- getLine
   runMainLoop $ Just (crearOraculo pred)
+
+guardarOraculo :: Maybe Oraculo -> IO()
+guardarOraculo (Just orac) = do
+  putStrLn "Diga el nombre del archivo para guardar."
+  nombre <- getLine
+  writeFile nombre (show orac)
+  runMainLoop (Just orac)
+guardarOraculo Nothing = do
+  putStrLn "El oraculo actual esta vacio."
+  runMainLoop Nothing
+
+cargarOraculo :: Maybe Oraculo -> IO()
+cargarOraculo orac = do
+  putStrLn "Diga el nombre del archivo a cargar."
+  nombre <- getLine
+  existe <- doesFileExist nombre
+  if existe then do
+    contenido <- readFile nombre
+    runMainLoop (Just (read contenido))
+  else do
+    putStrLn "El archivo dado no existe."
+    runMainLoop orac
