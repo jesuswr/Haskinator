@@ -1,20 +1,20 @@
 module Oraculo (Oraculo, 
-				Opciones, 
-				crearOraculo,
-				prediccion,
-				pregunta,
-				opciones,
-				respuesta,
-				ramificar
-				) where
+                Opciones, 
+                crearOraculo,
+                prediccion,
+                pregunta,
+                opciones,
+                respuesta,
+                ramificar
+                ) where
 
 import qualified Data.Map as M
 
 data Oraculo = 
-    Prediccion {prediccion :: String}
+    Prediccion {getPrediccion :: String}
     | Pregunta {
-                 pregunta :: String,
-                 opciones :: Opciones
+                 getPregunta :: String,
+                 mapOpciones :: Opciones
                }
     deriving(Read, Show)
 

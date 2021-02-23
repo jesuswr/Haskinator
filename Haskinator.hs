@@ -2,8 +2,7 @@ module Haskinator (main) where
 
 import System.Directory
 import Oraculo
-
-
+import ASCII_art
 
 
 main :: IO()
@@ -13,7 +12,8 @@ main = do
 
 runMainLoop :: Maybe Oraculo -> IO()
 runMainLoop orac = do
-  print orac
+  putStr haskinator_ascii_art_smallest
+  --print orac
   printOptions
   option <- getLine
   case option of
