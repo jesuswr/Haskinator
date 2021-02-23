@@ -1,4 +1,4 @@
-module Haskinator where
+module Haskinator (main) where
 
 import System.Directory
 import Oraculo
