@@ -1,4 +1,4 @@
-module Oraculo (Oraculo, 
+module Oraculo (Oraculo (..), 
                 Opciones, 
                 crearOraculo,
                 prediccion,
@@ -16,7 +16,7 @@ data Oraculo =
                  getPregunta :: String,
                  mapOpciones :: Opciones
                }
-    deriving(Read, Show)
+    deriving(Read, Show, Eq)
 
 type Opciones = M.Map String Oraculo
 
