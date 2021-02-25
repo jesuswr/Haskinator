@@ -11,10 +11,10 @@ module Oraculo (Oraculo (..),
 import qualified Data.Map as M
 
 data Oraculo = 
-    Prediccion {prediccion :: String}
+    Prediccion { obtenerPrediccion :: String}
     | Pregunta {
-                 pregunta :: String,
-                 opciones :: Opciones
+                 obtenerPregunta :: String,
+                 mapaOpciones :: Opciones
                }
     deriving(Read, Show, Eq)
 
@@ -44,5 +44,5 @@ respuesta oraculo preg = case oraculo of
                           Prediccion _ -> error "El oráculo no es una pregunta"
 
 ramificar :: [String] -> [Oraculo] -> String -> Oraculo
-ramificar pregs oracs preg = Pregunta {pregunta = preg
-                                      ,opciones = M.fromList $ zip pregs oracs}
+ramificar resps oracs preg = Pregunta {obtenerPregunta = preg
+                                      ,mapaOpciones = M.fromList $ zip resps oracs}
