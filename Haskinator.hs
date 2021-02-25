@@ -94,17 +94,25 @@ resolverPregunta oraculo = do
   resp <- getLine
   let evaluarRespuesta  | M.member resp ops = case respuesta oraculo resp of
                           Pregunta _ _ -> resolverPregunta $ respuesta oraculo resp
-                          Prediccion _ -> do
-                            nuevaPregunta <- resolverPrediccion $ oraculo
-                            return $ M.insert resp nuevaPregunta ops
-                            runMainLoop $ Just oraculo
+                          Prediccion pred -> do
+                            putStrLn $ pred ++ "\nSi / No"
+                            resultado <- getLine
+                            case map toLower resultado of
+                              "si" -> return ()
+                              "no" -> do                            
+                                nuevaPregunta <- resolverPrediccion $ oraculo
+                                return $ M.insert resp nuevaPregunta ops
+                                return ()
+                              _ -> do 
+                                putStrLn "Opcion incorrecta"
+                                resolverPregunta oraculo
                         | map toLower resp == "ninguna" = do
                             putStrLn "He fallado! Cual era la respuesta correcta?"
                             nuevaPred <- getLine
                             putStrLn preg
                             nuevaOpcion <- getLine
                             return $ M.insert nuevaOpcion (crearOraculo nuevaPred) ops
-                            runMainLoop $Just oraculo
+                            return ()
                         | otherwise = do
                           putStrLn "Entrada no permitida"
                           resolverPregunta oraculo
