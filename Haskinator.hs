@@ -4,7 +4,8 @@ import System.Directory
 import Oraculo
 --import ASCII_art
 import qualified Data.Map as M
-
+import qualified Data.List as L
+import Data.Char
 
 main :: IO()
 main = do
@@ -61,11 +62,65 @@ cargarOraculo orac = do
   existe <- doesFileExist nombre
   if existe then do
     contenido <- readFile nombre
-    runMainLoop (Just (read contenido))
+    runMainLoop $ Just $ read contenido
   else do
     putStrLn "El archivo dado no existe."
     runMainLoop orac
 
+
+-- Flujo principal de prediccion
+predecir :: Maybe Oraculo -> IO ()
+predecir oraculo = case oraculo of
+  Nothing -> putStrLn "Consulta invalida: oraculo vacio. Cree un oraculo nuevo."
+  Just orac -> case orac of 
+    Pregunta _ _ -> resolverPregunta orac
+    Prediccion s -> do                          -- Unico nodo de prediccion
+      putStrLn $ s ++ "\nSi / No"
+      resp <- getLine
+      case map toLower resp of
+        "si" -> runMainLoop oraculo
+        "no" -> do
+          nuevaPregunta <- resolverPrediccion orac
+          runMainLoop $ Just nuevaPregunta
+        _    -> do
+          putStrLn "Opcion incorrecta"
+          predecir oraculo
+
+resolverPregunta :: Oraculo -> IO()
+resolverPregunta oraculo = do
+  let preg = pregunta oraculo
+  let ops  = opciones oraculo
+  putStrLn $ preg ++ "\n" ++ (L.intercalate " / " $ M.keys ops)
+  resp <- getLine
+  let evaluarRespuesta  | M.member resp ops = case respuesta oraculo resp of
+                          Pregunta _ _ -> resolverPregunta $ respuesta oraculo resp
+                          Prediccion _ -> do
+                            nuevaPregunta <- resolverPrediccion $ oraculo
+                            return $ M.insert resp nuevaPregunta ops
+                            runMainLoop $ Just oraculo
+                        | map toLower resp == "ninguna" = do
+                            putStrLn "He fallado! Cual era la respuesta correcta?"
+                            nuevaPred <- getLine
+                            putStrLn preg
+                            nuevaOpcion <- getLine
+                            return $ M.insert nuevaOpcion (crearOraculo nuevaPred) ops
+                            runMainLoop $Just oraculo
+                        | otherwise = do
+                          putStrLn "Entrada no permitida"
+                          resolverPregunta oraculo
+  evaluarRespuesta
+
+resolverPrediccion ::  Oraculo -> IO Oraculo
+resolverPrediccion oraculo = do
+  putStrLn "He fallado! Cual era la respuesta correcta?"
+  nuevaOpcion <- getLine
+  putStrLn $ "Que pregunta distingue a" ++ nuevaOpcion ++ "de las otras opciones?"
+  nuevaPreg <- getLine
+  putStrLn $ "Cual es la respuesta a \"" ++ nuevaPreg ++ "\"para " ++ nuevaOpcion ++ "?"
+  respuesta1 <- getLine
+  putStrLn $ "Cual es la respuesta a \"" ++ nuevaPreg ++ "\"para " ++ (prediccion oraculo) ++ "?"
+  respuesta2 <- getLine
+  return $ ramificar [respuesta1, respuesta2] [crearOraculo nuevaOpcion, oraculo] nuevaPreg
 
 -- Preunta crucial:
 -- LCA entre dos nodos prediccion
