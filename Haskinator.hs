@@ -20,10 +20,10 @@ runMainLoop orac = do
   option <- getLine
   case option of
     "1" -> nuevoOraculo
-    "2" -> putStrLn "En progreso"
+    "2" -> predecir orac
     "3" -> guardarOraculo orac
     "4" -> cargarOraculo orac
-    "5" -> putStrLn "En progreso"
+    "5" -> consultarPreguntaCrucial orac
     "6" -> return()
     _   -> do
       putStrLn "Opcion no valida."
@@ -122,15 +122,26 @@ resolverPrediccion ::  Oraculo -> IO Oraculo
 resolverPrediccion oraculo = do
   putStrLn "He fallado! Cual era la respuesta correcta?"
   nuevaOpcion <- getLine
-  putStrLn $ "Que pregunta distingue a" ++ nuevaOpcion ++ "de las otras opciones?"
+  putStrLn $ "Que pregunta distingue a " ++ nuevaOpcion ++ " de las otras opciones?"
   nuevaPreg <- getLine
-  putStrLn $ "Cual es la respuesta a \"" ++ nuevaPreg ++ "\"para " ++ nuevaOpcion ++ "?"
+  putStrLn $ "Cual es la respuesta a \"" ++ nuevaPreg ++ "\" para " ++ nuevaOpcion ++ "?"
   respuesta1 <- getLine
-  putStrLn $ "Cual es la respuesta a \"" ++ nuevaPreg ++ "\"para " ++ (prediccion oraculo) ++ "?"
+  putStrLn $ "Cual es la respuesta a \"" ++ nuevaPreg ++ "\" para " ++ (prediccion oraculo) ++ "?"
   respuesta2 <- getLine
   return $ ramificar [respuesta1, respuesta2] [crearOraculo nuevaOpcion, oraculo] nuevaPreg
 
+
 -- Preunta crucial:
+
+consultarPreguntaCrucial :: Maybe Oraculo -> IO ()
+consultarPreguntaCrucial orac = do
+  putStrLn "Ingrese una prediccion presente en el oraculo actual:"
+  prediccion1 <- getLine
+  putStrLn "Ingrese otra prediccion presente en el oraculo actual:"
+  prediccion2 <- getLine
+  preguntaCrucial orac prediccion1 prediccion2
+  runMainLoop orac
+
 -- LCA entre dos nodos prediccion
 preguntaCrucial :: Maybe Oraculo -> String -> String -> IO ()
 preguntaCrucial Nothing _ _= putStrLn "Consulta invalida: oraculo vacio. Cree un oraculo nuevo."

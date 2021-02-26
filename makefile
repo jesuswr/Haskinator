@@ -1,6 +1,6 @@
 
 
-Haskinator:
+Haskinator: Haskinator.hs Oraculo.hs
 	ghc -main-is Haskinator Haskinator.hs -o Haskinator
 
 
