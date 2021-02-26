@@ -14,8 +14,6 @@ main = do
 
 runMainLoop :: Maybe Oraculo -> IO()
 runMainLoop orac = do
-  --putStr haskinator_ascii_art_smallest
-  --print orac
   printOptions
   option <- getLine
   case option of
@@ -71,66 +69,73 @@ cargarOraculo orac = do
 -- Flujo principal de prediccion
 predecir :: Maybe Oraculo -> IO ()
 predecir oraculo = case oraculo of
-  Nothing -> putStrLn "Consulta invalida: oraculo vacio. Cree un oraculo nuevo."
+  Nothing -> do
+    putStrLn "Consulta invalida: oraculo vacio. Cree un oraculo nuevo."
+    runMainLoop oraculo
   Just orac -> case orac of 
-    Pregunta _ _ -> resolverPregunta orac
-    Prediccion s -> do                          -- Unico nodo de prediccion
-      putStrLn $ s ++ "\nSi / No"
-      resp <- getLine
-      case map toLower resp of
-        "si" -> runMainLoop oraculo
-        "no" -> do
-          nuevaPregunta <- resolverPrediccion orac
-          runMainLoop $ Just nuevaPregunta
-        _    -> do
-          putStrLn "Opcion incorrecta"
-          predecir oraculo
+    Pregunta _ _ -> do
+      resultado <- resolverPregunta orac
+      case resultado of
+        Just nuevoOraculo -> runMainLoop $ Just nuevoOraculo
+        Nothing           -> runMainLoop $ Just orac
+    Prediccion s -> do
+      resultado <- resolverPrediccion orac
+      case resultado of
+        Just nuevoOraculo -> runMainLoop $ Just nuevoOraculo
+        Nothing           -> runMainLoop $ Just orac
 
-resolverPregunta :: Oraculo -> IO()
+
+resolverPregunta :: Oraculo -> IO (Maybe Oraculo)
 resolverPregunta oraculo = do
   let preg = pregunta oraculo
   let ops  = opciones oraculo
   putStrLn $ preg ++ "\n" ++ (L.intercalate " / " $ M.keys ops)
   resp <- getLine
-  let evaluarRespuesta  | M.member resp ops = case respuesta oraculo resp of
-                          Pregunta _ _ -> resolverPregunta $ respuesta oraculo resp
-                          Prediccion pred -> do
-                            putStrLn $ pred ++ "\nSi / No"
-                            resultado <- getLine
-                            case map toLower resultado of
-                              "si" -> return ()
-                              "no" -> do                            
-                                nuevaPregunta <- resolverPrediccion $ oraculo
-                                return $ M.insert resp nuevaPregunta ops
-                                return ()
-                              _ -> do 
-                                putStrLn "Opcion incorrecta"
-                                resolverPregunta oraculo
-                        | map toLower resp == "ninguna" = do
-                            putStrLn "He fallado! Cual era la respuesta correcta?"
-                            nuevaPred <- getLine
-                            putStrLn preg
-                            nuevaOpcion <- getLine
-                            return $ M.insert nuevaOpcion (crearOraculo nuevaPred) ops
-                            return ()
-                        | otherwise = do
-                          putStrLn "Entrada no permitida"
-                          resolverPregunta oraculo
-  evaluarRespuesta
+  if (M.member resp ops) then do
+    case respuesta oraculo resp of
+      Pregunta _ _    -> do
+        resultado <- resolverPregunta $ respuesta oraculo resp
+        case resultado of
+          Just nuevoOrac ->
+            return $ Just $ Pregunta preg (M.insert resp nuevoOrac ops)
+          Nothing        -> 
+            return Nothing
+      Prediccion pred -> do
+        resultado <- resolverPrediccion $ Prediccion pred
+        case resultado of
+          Just nuevoOrac ->
+            return $ Just $ Pregunta preg (M.insert resp nuevoOrac ops)
+          Nothing        -> 
+            return Nothing
+  else if map toLower resp == "ninguna" then do
+    putStrLn "He fallado! Cual era la respuesta correcta?"
+    nuevaPred <- getLine
+    putStrLn preg
+    nuevaOpcion <- getLine
+    return $ Just $ Pregunta preg (M.insert nuevaOpcion (crearOraculo nuevaPred) ops)
+  else do
+    putStrLn "Entrada no permitida"
+    resolverPregunta oraculo
 
-resolverPrediccion ::  Oraculo -> IO Oraculo
-resolverPrediccion oraculo = do
-  putStrLn "He fallado! Cual era la respuesta correcta?"
-  nuevaOpcion <- getLine
-  putStrLn $ "Que pregunta distingue a " ++ nuevaOpcion ++ " de las otras opciones?"
-  nuevaPreg <- getLine
-  putStrLn $ "Cual es la respuesta a \"" ++ nuevaPreg ++ "\" para " ++ nuevaOpcion ++ "?"
-  respuesta1 <- getLine
-  putStrLn $ "Cual es la respuesta a \"" ++ nuevaPreg ++ "\" para " ++ (prediccion oraculo) ++ "?"
-  respuesta2 <- getLine
-  return $ ramificar [respuesta1, respuesta2] [crearOraculo nuevaOpcion, oraculo] nuevaPreg
-
-
+resolverPrediccion ::  Oraculo -> IO (Maybe Oraculo)
+resolverPrediccion orac@(Prediccion s) = do
+  putStrLn $ s ++ "\nSi / No"
+  resp <- getLine
+  case map toLower resp of
+    "si" -> return Nothing
+    "no" -> do
+      putStrLn "He fallado! Cual era la respuesta correcta?"
+      nuevaOpcion <- getLine
+      putStrLn $ "Que pregunta distingue a " ++ nuevaOpcion ++ " de las otras opciones?"
+      nuevaPreg <- getLine
+      putStrLn $ "Cual es la respuesta a \"" ++ nuevaPreg ++ "\" para " ++ nuevaOpcion ++ "?"
+      respuesta1 <- getLine
+      putStrLn $ "Cual es la respuesta a \"" ++ nuevaPreg ++ "\" para " ++ s ++ "?"
+      respuesta2 <- getLine
+      return $ Just $ ramificar [respuesta1, respuesta2] [crearOraculo nuevaOpcion, orac] nuevaPreg
+    _    -> do
+      putStrLn "Entrada no permitida"
+      resolverPrediccion orac
 -- Preunta crucial:
 
 consultarPreguntaCrucial :: Maybe Oraculo -> IO ()
