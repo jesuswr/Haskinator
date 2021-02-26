@@ -2,14 +2,14 @@ module Haskinator (main) where
 
 import System.Directory
 import Oraculo
---import ASCII_art
 import qualified Data.Map as M
 import qualified Data.List as L
 import Data.Char
 
 main :: IO()
 main = do
-  putStrLn "Bienvenido a Haskinator."
+  putStrLn "Bienvenido a"
+  putStrLn haskinator_logo
   runMainLoop Nothing
 
 runMainLoop :: Maybe Oraculo -> IO()
@@ -136,8 +136,9 @@ resolverPrediccion orac@(Prediccion s) = do
     _    -> do
       putStrLn "Entrada no permitida"
       resolverPrediccion orac
--- Preunta crucial:
 
+
+-- Pregunta crucial:
 consultarPreguntaCrucial :: Maybe Oraculo -> IO ()
 consultarPreguntaCrucial orac = do
   putStrLn "Ingrese una prediccion presente en el oraculo actual:"
@@ -154,9 +155,10 @@ preguntaCrucial (Just orac) prediccion1 prediccion2
   | prediccion1 == prediccion2 = putStrLn "Consulta invalida: las predicciones deben ser distintas."
   | otherwise                  = case dfsLca prediccion1 prediccion2 orac of
     Nothing -> putStrLn "Consulta invalida: ambas predicciones deben pertenecer al oraculo."
-    (Just (pregunta, _)) -> do
+    (Just (pregunta, 1)) -> do
       putStrLn "La pregunta crucial para las predicciones dadas es:"
       putStrLn pregunta
+    otherwise -> putStrLn "Consulta invalida: ambas predicciones deben pertenecer al oraculo."
 
 -- Encuentra el LCA de dos nodos con dfs
 dfsLca :: String -> String  -> Oraculo -> Maybe (String, Int)
@@ -195,3 +197,14 @@ dfsAux pred (Prediccion pred_)
 
 dfsAux pred (Pregunta _ opciones) = 
   or $ map (dfsAux pred . snd) (M.toList opciones)
+
+
+-----
+
+haskinator_logo :: String
+haskinator_logo =
+  "    __  _____   _____ __ __ _____   _____  __________  ____  __\n\
+    \   / / / /   | / ___// //_//  _/ | / /   |/_  __/ __ \\/ __ \\/ /\n\
+    \  / /_/ / /| | \\__ \\/ ,<   / //  |/ / /| | / / / / / / /_/ / / \n\
+    \ / __  / ___ |___/ / /| |_/ // /|  / ___ |/ / / /_/ / _, _/_/  \n\
+    \/_/ /_/_/  |_/____/_/ |_/___/_/ |_/_/  |_/_/  \\____/_/ |_(_)   \n"
