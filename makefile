@@ -1,10 +1,12 @@
 
+all: Haskinator
+
+out:
+	mkdir out
 
 Haskinator: Haskinator.hs Oraculo.hs
-	ghc -main-is Haskinator Haskinator.hs -o Haskinator
-
-
+	ghc -main-is Haskinator -outputdir out Haskinator.hs -o Haskinator
+	
 clean:
-	rm Haskinator
-	rm *.hi
-	rm *.o
+	if test -d "out"; then rm -rd "out"; fi
+	if test -f "Haskinator"; then rm "Haskinator"; fi
