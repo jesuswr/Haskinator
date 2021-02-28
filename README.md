@@ -50,14 +50,14 @@ representadas por las opciones.
 
 `prediccion` funciona de la siguiente manera: en primer lugar, chequea si el \
 oráculo actual es solo una predicción o una pregunta. En caso de ser una \
-predicción, la muestra al usuario. Si el usuario decide no aceptarla, se llama \
-a la función `resolverPrediccion`. Esta se encarga de interactuar con el \
-usuario para obtener más información y realizar una ramificación de esta \
-predicción retornando el tipo de dato Pregunta que representa a esta bifurcación. 
+predicción, se llama a la función `resolverPrediccion`. Esta se encarga de \
+interactuar con el usuario para preguntarle si la acepta o no. En caso de que no,\
+interactua con el usuario para obtener más información y realizar una ramificación\
+de esta predicción retornando el tipo de dato Pregunta que representa a esta bifurcación. 
 
 En caso de ser una pregunta, se llama a la función `resolverPregunta` esta se \
 encarga de recorrer el árbol desde la raíz (pregunta principal) hasta llegar a\
- una hoja, pidiendo opciones al usuario para saber cuál es el siguiente nodo a \
+una hoja, pidiendo opciones al usuario para saber cuál es el siguiente nodo a \
 considerar. En caso de que el usuario no acepte ninguna de las opciones, se \
 actualiza la pregunta actual con la opción especificada por el usuario \
 (actualizando su mapa de opciones) y se retorna esta pregunta actualizada. \
@@ -71,7 +71,7 @@ apunten a la nueva pregunta creada.
 Otra de las funciones interesantes es la implementación de la pregunta crucial. \
 Para resolver este problema, se implementó una búsqueda en profundidad (dfs)    \
 que calcula el ancestro común más bajo entre las predicciones ingresadas por el \
- usuario.
+usuario.
 
 En primer lugar, se creó el tipo de dato Resultado. Este representa el resultado\
 de haber ejecutado la búsqueda a partir de un nodo determinado. La semántica de \
@@ -86,7 +86,7 @@ en el nodo actual.
 crucial es str.
 
 De esta manera, el algoritmo empieza en un nodo determinado, llama a la misma \
-función sobre todos sus hijos, y combina los resultados obtenidoss. En caso de \
+función sobre todos sus hijos, y combina los resultados obtenidos. En caso de \
 llegar a una predicción, se retornará el resultado como un Primero, Segundo o \
 Ninguno, dependiendo si esta predicción es alguna o ninguna de las que se \
 quieren buscar. En caso de estar en una pregunta y haber encontrado ambas \
