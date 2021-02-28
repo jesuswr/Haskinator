@@ -95,6 +95,6 @@ resultado como un Ambos str. Esto se repite a lo largo de todo el árbol y al \
 final se considera la respuesta de la raíz y se le entrega esta al usuario.
 
 Por último, para las funcionalidades de cargar y persistir, simplemente \
-se construyó el objeto Oraculo haciendo que este implementara las *typeclasses* \
+se construyó el tipo Oraculo haciendo que este implementara las *typeclasses* \
 *read* y *show*. Estas nos permiten traducir directamente la estructura del \
 oráculo a un archivo y leerla sin ninguna implementación adicional.
