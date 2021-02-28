@@ -1,6 +1,6 @@
 # Haskinator
 
-![](Haskinator.jpg)
+![alt text](./Haskinator.jpg)
 
 Este archivo contiene una breve descripción de nuestra implementación del proyecto Haskinator.
 
@@ -41,7 +41,7 @@ La función `prediccion` es la implementacion del flujo principal de predicción
 el oráculo que representa el estado actual y realiza las interacciones con el usuario para realizar\
 las predicciones o modificar el oráculo en caso de ser necesario.
 
-Para entender el funcionamiento de este, podemos entender la representación de un oráculo como un\ 
+Para entender el funcionamiento de este, podemos entender la representación de un oráculo como un\
 árbol, donde las hojas son predicciones, el resto de los nodos representan preguntas y las \
 transiciones entre los nodos están representadas por las opciones. 
 
