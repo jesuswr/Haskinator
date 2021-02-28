@@ -145,9 +145,9 @@ resolverPregunta oraculo = do
     resolverPregunta oraculo
 
 --
--- Función que será llamada en caso que una predicción sea rechazada. La función
--- pedirá al usuario los datos de ramificación y retornará el oráculo pregunta
--- que corresponde a esta.
+-- Función para determinar si una predicción es correcta o no. En caso de que no,
+-- la función pedirá al usuario los datos de ramificación y retornará el 
+-- oráculo pregunta que corresponde a esta.
 --
 resolverPrediccion ::  Oraculo -> IO (Maybe Oraculo)
 resolverPrediccion orac@(Prediccion s) = do
